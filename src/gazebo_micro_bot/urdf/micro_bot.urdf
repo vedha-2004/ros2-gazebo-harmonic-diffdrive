@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<robot name="micro_bot">
+
+  <!-- BASE -->
+  <link name="base_link">
+    <inertial>
+      <mass value="5.0"/>
+      <inertia ixx="0.2" iyy="0.2" izz="0.2"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0.05"/>
+      <geometry>
+        <box size="0.4 0.3 0.1"/>
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.05"/>
+      <geometry>
+        <box size="0.4 0.3 0.1"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- LEFT WHEEL -->
+  <link name="left_wheel">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.001" iyy="0.001" izz="0.001"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+
+    <visual>
+      <origin rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.02"/>
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- RIGHT WHEEL -->
+  <link name="right_wheel">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.001" iyy="0.001" izz="0.001"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+
+    <visual>
+      <origin rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.02"/>
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- JOINTS -->
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="0 0.15 0.05"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="0 -0.15 0.05"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- GAZEBO DIFF DRIVE -->
+  <gazebo>
+    <plugin
+      filename="gz-sim-diff-drive-system"
+      name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.3</wheel_separation>
+      <wheel_radius>0.05</wheel_radius>
+      <topic>cmd_vel</topic>
+    </plugin>
+  </gazebo>
+
+</robot>

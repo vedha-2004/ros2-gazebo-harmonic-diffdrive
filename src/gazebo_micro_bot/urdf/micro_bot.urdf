@@ -97,5 +97,15 @@
       <topic>cmd_vel</topic>
     </plugin>
   </gazebo>
+<!-- Wheel friction for Gazebo Harmonic -->
+  <gazebo reference="left_wheel">
+   <mu1>1.0</mu1>
+   <mu2>1.0</mu2>
+  </gazebo>
+
+  <gazebo reference="right_wheel">
+   <mu1>1.0</mu1>
+   <mu2>1.0</mu2>
+  </gazebo>
 
 </robot>

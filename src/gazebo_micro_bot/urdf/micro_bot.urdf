@@ -150,5 +150,53 @@
       </plugin>
     </sensor>
   </gazebo>
+    <!-- ================= LiDAR ================= -->
+
+  <!-- LiDAR link -->
+  <link name="lidar_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- LiDAR joint -->
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.2 0 0.18" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Gazebo Harmonic LiDAR sensor -->
+  <gazebo reference="lidar_link">
+    <sensor name="lidar_sensor" type="gpu_lidar">
+      <update_rate>10</update_rate>
+
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.1</min>
+          <max>10.0</max>
+        </range>
+      </ray>
+
+      <plugin
+        filename="libgz-sim8-gpu-lidar-system.so"
+        name="gz::sim::systems::GpuLidar">
+        <ros>
+          <namespace>/</namespace>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <frame_name>lidar_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
 
 </robot>

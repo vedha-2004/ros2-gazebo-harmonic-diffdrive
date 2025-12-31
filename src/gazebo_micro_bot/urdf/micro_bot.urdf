@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="micro_bot">
 
-  <!-- BASE -->
+  <!-- ================= BASE ================= -->
   <link name="base_link">
     <inertial>
       <mass value="5.0"/>
@@ -24,7 +24,7 @@
     </collision>
   </link>
 
-  <!-- LEFT WHEEL -->
+  <!-- ================= LEFT WHEEL ================= -->
   <link name="left_wheel">
     <inertial>
       <mass value="0.5"/>
@@ -47,7 +47,14 @@
     </collision>
   </link>
 
-  <!-- RIGHT WHEEL -->
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="0 0.15 0.05"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- ================= RIGHT WHEEL ================= -->
   <link name="right_wheel">
     <inertial>
       <mass value="0.5"/>
@@ -70,14 +77,6 @@
     </collision>
   </link>
 
-  <!-- JOINTS -->
-  <joint name="left_wheel_joint" type="continuous">
-    <parent link="base_link"/>
-    <child link="left_wheel"/>
-    <origin xyz="0 0.15 0.05"/>
-    <axis xyz="0 1 0"/>
-  </joint>
-
   <joint name="right_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
@@ -85,27 +84,71 @@
     <axis xyz="0 1 0"/>
   </joint>
 
-  <!-- GAZEBO DIFF DRIVE -->
+  <!-- ================= CAMERA ================= -->
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.05"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.15 0 0.15" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ================= GAZEBO PLUGINS ================= -->
+
+  <!-- Diff Drive -->
   <gazebo>
     <plugin
       filename="gz-sim-diff-drive-system"
       name="gz::sim::systems::DiffDrive">
+
       <left_joint>left_wheel_joint</left_joint>
       <right_joint>right_wheel_joint</right_joint>
-      <wheel_separation>0.3</wheel_separation>
+
+      <wheel_separation>0.30</wheel_separation>
       <wheel_radius>0.05</wheel_radius>
-      <topic>cmd_vel</topic>
+
+      <odom_frame>odom</odom_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+
+      <cmd_vel_topic>cmd_vel</cmd_vel_topic>
+      <odom_topic>odom</odom_topic>
+
     </plugin>
   </gazebo>
-<!-- Wheel friction for Gazebo Harmonic -->
-  <gazebo reference="left_wheel">
-   <mu1>1.0</mu1>
-   <mu2>1.0</mu2>
-  </gazebo>
 
-  <gazebo reference="right_wheel">
-   <mu1>1.0</mu1>
-   <mu2>1.0</mu2>
+  <!-- Camera sensor -->
+  <gazebo reference="camera_link">
+    <sensor name="camera_sensor" type="camera">
+      <update_rate>30</update_rate>
+
+      <camera>
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>50.0</far>
+        </clip>
+      </camera>
+
+      <plugin
+        filename="libgz-sim-camera-system.so"
+        name="gz::sim::systems::Camera">
+        <ros>
+          <namespace>/camera</namespace>
+        </ros>
+        <frame_name>camera_optical_frame</frame_name>
+      </plugin>
+    </sensor>
   </gazebo>
 
 </robot>
